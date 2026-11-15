@@ -40,20 +40,17 @@ def main():
 
     filters = []
     if args.aspect == "9:16":
-        # Scale to fill portrait height, then crop to 9:16. x position is
-        # configurable; this is a crop, not semantic subject re-composition.
         out_w = round(args.height * 9 / 16)
         filters.append(
             f"scale=-2:{args.height},"
             f"crop={out_w}:{args.height}:"
-            f"max(0,min(iw-{out_w},(iw-{out_w})*{args.crop_x:.6f})):0"
+            f"(iw-{out_w})*{args.crop_x:.6f}:0"
         )
     else:
         out_w = round(args.height * 16 / 9)
         filters.append(f"scale={out_w}:{args.height}")
 
     if args.srt:
-        # FFmpeg subtitles filter expects a properly escaped path.
         srt_path = str(Path(args.srt).resolve()).replace("\\", "/")
         srt_path = srt_path.replace(":", "\\:").replace("'", "\\'")
         filters.append(f"subtitles='{srt_path}'")
