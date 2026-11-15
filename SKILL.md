@@ -53,3 +53,16 @@ Keep titles, faces, captions, and key props within the target frame's safe area.
 Check story structure, whisper escalation, caption readability, narration timing, aspect ratio, and the opening/ending bookend. Do not copy exact scripts, titles, or characters from reference films.
 
 Deliver storyboard JSON and rendered video when the rendering environment and required assets are available. Be explicit about missing renderer capability; never claim an output was rendered if it was not.
+
+
+## Available post-processing helper
+
+When a rendered MP4 and SRT are available, `scripts/postprocess.py` can burn the SRT into the video. It can also convert a landscape render to a 9:16 centre crop. This does not re-compose individual scenes; review the result for clipped subjects and text, and adjust `--crop-x` where needed.
+
+Examples:
+```bash
+python3 scripts/postprocess.py input.mp4 --srt narration.srt -o captioned.mp4
+python3 scripts/postprocess.py input.mp4 --aspect 9:16 --srt narration.srt -o portrait-captioned.mp4
+```
+
+The original `scripts/render.py` and font assets still need to be present before the complete source-archive rendering workflow can run. Do not claim direct storyboard rendering is available from this repository until those files are imported and tested.
