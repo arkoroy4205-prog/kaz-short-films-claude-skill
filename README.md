@@ -8,29 +8,34 @@ A Claude Skill project for creating minimalist animated shorts from a creative b
 2. Provide a topic/creative brief and choose **9:16 vertical**, **16:9 landscape**, or both.
 3. Develop a scene-by-scene storyboard aligned to narration and subtitle timing.
 4. Render the storyboard in the selected aspect ratio(s), after checking renderer support.
+5. Optionally post-process the render with `scripts/postprocess.py` to burn SRT captions and/or create a 9:16 centre crop.
 
-## Imported from the supplied archive
+## Imported files
 
 - `SKILL.md` — Skill instructions and workflow
-- `references/story-formula.md` — seven-beat story structure and niche adaptations
-- `references/style-bible.md` — visual language, palette, type, pacing, sound
-- `references/storyboard-schema.md` — storyboard field reference and media workflow cautions
-- `references/film-breakdowns.md` — summarized breakdown notes for the three reference films
-- `examples/the-cost-of-later.json` — sample storyboard
-- `examples/pose-gallery.json` — hero pose gallery
+- `references/` — story formula, visual style, storyboard schema, film breakdowns
+- `examples/` — sample storyboard JSON files
+- `scripts/postprocess.py` — SRT burn-in and aspect-ratio post-processing helper
 - `LICENSE` — source and third-party material notices
 
-## Not yet imported
+## Still pending
 
-The uploaded archive contains 341 entries. The Python renderer (`scripts/render.py`), Poppins font binaries, and reference screenshot frames have not yet been committed to this repository. The reference screenshots are third-party film frames and are intentionally excluded from this public repository.
+The uploaded archive contains 341 entries. The original renderer (`scripts/render.py`) and Poppins font binaries have not yet been committed to this repository. Third-party reference screenshot frames are intentionally excluded from this public repository.
 
-The renderer in the source archive is landscape-first and has voice-over support; it does not natively implement the requested SRT burn-in or 9:16 output options. Those capabilities must be implemented and tested before claiming that the Skill can directly render both formats or burn subtitles.
+The original renderer is landscape-first and has voice-over support. The post-processor can burn SRT captions and crop a rendered landscape MP4 to 9:16, but this is a centre crop, not semantic re-composition. Review framing and use `--crop-x` to shift the crop. The full workflow is not runnable from this repository until the original renderer is imported.
 
-## Planned structure
+## Post-processing examples
 
-- `scripts/render.py` — original rendering script (pending import)
-- `assets/fonts/` — licensed Poppins font files (pending import)
-- `reference_screenshots/` — excluded third-party study images
+```bash
+# Burn SRT captions into an existing render
+python3 scripts/postprocess.py input.mp4 --srt narration.srt -o captioned.mp4
+
+# Convert a landscape render to a 9:16 centre crop
+python3 scripts/postprocess.py input.mp4 --aspect 9:16 -o portrait.mp4
+
+# Crop toward the right side of the source frame
+python3 scripts/postprocess.py input.mp4 --aspect 9:16 --crop-x 0.62 -o portrait-right.mp4
+```
 
 ## File limit
 
