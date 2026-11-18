@@ -1,4 +1,5 @@
-import React, {useMemo} from 'react';
+import React from 'react';
+import {cues} from './cues';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring} from 'remotion';
 
 type Props = {audioSrc: string; srtSrc: string};
@@ -6,18 +7,6 @@ type Cue = {start: number; end: number; text: string};
 
 const RED = '#FF1E2D';
 const WHITE = '#F5F5F5';
-
-const parseSrt = (raw: string): Cue[] => raw.trim().split(/\r?\n\s*\r?\n/).map((block) => {
-  const lines = block.split(/\r?\n/);
-  const time = lines.find((line) => line.includes('-->'));
-  if (!time) return null;
-  const [a, b] = time.split('-->').map((v) => v.trim().split(',').join('.'));
-  const seconds = (v: string) => {
-    const [h, m, s] = v.split(':');
-    return Number(h) * 3600 + Number(m) * 60 + Number(s);
-  };
-  return {start: seconds(a), end: seconds(b), text: lines.slice(lines.indexOf(time) + 1).join(' ').replace(/<[^>]+>/g, '')};
-}).filter((x): x is Cue => Boolean(x && x.text));
 
 const Stickman: React.FC<{scale?: number; mood?: 'idle'|'walk'|'reach'}> = ({scale = 1, mood = 'idle'}) => {
   const frame = useCurrentFrame();
@@ -62,13 +51,6 @@ const Scene: React.FC<{cue: Cue; index: number}> = ({cue, index}) => {
 };
 
 export const MotivationalVideo: React.FC<Props> = ({audioSrc, srtSrc}) => {
-  // SRT is parsed by the build helper and emitted as public/cues.json.
-  // Keeping this fallback makes the template previewable before subtitle import.
-  const cues: Cue[] = useMemo(() => [
-    {start: 0, end: 6, text: 'Your next chapter starts with one decision.'},
-    {start: 6, end: 12, text: 'Keep showing up, even when progress feels slow.'},
-    {start: 12, end: 18, text: 'Small actions create lasting change.'}
-  ], []);
   const {fps, durationInFrames} = useVideoConfig();
   return <AbsoluteFill style={{backgroundColor: '#050505'}}>
     {cues.map((cue, i) => {
